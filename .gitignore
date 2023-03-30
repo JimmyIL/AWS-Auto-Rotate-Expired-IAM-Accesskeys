@@ -1,0 +1,38 @@
+# Ignore OS X metadata files
+.history
+.DS_Store
+
+# Ignore vscode
+**.vscode
+
+# Ignore tfstate
+*.tfstate
+**tfstate.*
+*.backup
+
+# Ignore terraform installs
+**.terraform
+**/.terraform/*
+.terraform.lock.hcl
+
+
+# Ignore pem file(s)
+**.pem
+
+# Don't ask why this happened often enough to warrant inclusion...
+crash.log
+*.txt
+
+# Ignore vim swap files
+**.swp
+
+# Ignore build artifacts
+#*.zip
+build-harness
+.build-harness
+
+# Ignore taskcat outputs
+**.taskcat_outputs/
+
+# Ignore ssh_auth_sock file for tmux/screen ssh-agent sharing
+**.ssh_auth_sock
