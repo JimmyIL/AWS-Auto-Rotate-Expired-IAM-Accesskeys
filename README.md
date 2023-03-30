@@ -1,5 +1,5 @@
 
-# Overview
+# Auto Rotate AWS IAM User active accesskeys
 Please understand THIS WILL ROTATE ALL IAM USERs for an account and create secrets in SecretsManager FOR EVERY USER that is NOT defined in the 'username_exception' variable.  If you don't wish to rotate certain users define them in 'username_exception' (see below)
 <br>
 default rotates AccessKeys/secretkeys if created on or older than 90 days.
