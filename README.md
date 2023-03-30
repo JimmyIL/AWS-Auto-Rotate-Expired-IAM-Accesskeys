@@ -1,5 +1,5 @@
 
-# Auto Rotate AWS IAM User active accesskeys
+# Auto Rotate AWS IAM User active accesskeys <br>
 Please understand THIS WILL ROTATE ALL IAM USERs for an account and create secrets in SecretsManager FOR EVERY USER that is NOT defined in the 'username_exception' variable.  If you don't wish to rotate certain users define them in 'username_exception' (see below)
 <br>
 default rotates AccessKeys/secretkeys if created on or older than 90 days.
@@ -15,7 +15,7 @@ In the event a user has NO keys, they will continue to have no keys.
 In the rare event the user has 2 'ACTIVE' keys, this function will currently ALWAYS remove the oldest active key completely since IAM AccessKeys only allow 2 total and cannot be modified.<br>
 
 # How it Works
-this deployment uses a Lambda function that rotates EVERY IAM user that you define every 90 days (default). <br>
+this deployment uses a Lambda function that rotates EVERY IAM user that you define every 90 days (90 day default or you can change this var.). <br>
 Lambda function is triggered daily from an EventBridge timed event (previously CloudwatchEvents)<br>
 
 #This solution is pre-compiled and ready to deploy, the lambda is already packaged here in the repo (.zip)<br>
@@ -31,8 +31,8 @@ Lambda function is triggered daily from an EventBridge timed event (previously C
 - creates a new IAM user accesskey
 - checks if secret name in SecretsManager already exists that matches '$user_credentials'
 - if exists already;  updates secret with new keys created into secrets manager 
-- writes a secrets permissions policy to the secret so that username can access his/her own new secret (only can retrieve own secret string)
+- this writes a secrets permissions policy to the secret so that only the username that secret is for can access his/her own new secret (only can retrieve own secret string)
 
 
 IN Progress Lambda function for sns topic checking secrets update dates and sending an email with users that the rotation rotated keys for
-(troubleshooting why its not working...)
+(currently working on this...)
