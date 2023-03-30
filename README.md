@@ -1,24 +1,25 @@
 
 # Overview
-Please understand THIS WILL ROTATE ALL IAM USERs for an account and create secrets in SecretsManager FOR EVERY USER that is not defined in the 'username_exception' variable
+Please understand THIS WILL ROTATE ALL IAM USERs for an account and create secrets in SecretsManager FOR EVERY USER that is NOT defined in the 'username_exception' variable.  If you don't wish to rotate certain users define them in 'username_exception' (see below)
+<br>
 default rotates AccessKeys/secretkeys if created on or older than 90 days.
-
-(depending on the amount of users, it could be costly for customers with a large amount of users since it is using SecretsManager)
-
+<br>
+note:depending on the amount of users, it could be costly for customers with a large amount of users since it is storing the keys in AWS SecretsManager)
+<br>
 IF there are automated service accounts in IAMusers you don't want to rotate, you can add them as a list to tfvars 'username_exceptions' and it will skip these users.
-
+<br>
 In the event a user only has 'INACTIVE' keys, no rotation or modification takes place.  Essentially that user is skipped.
-
+<br>
 In the event a user has NO keys, they will continue to have no keys.
-
-In the rare event the user has 2 'ACTIVE' keys, this function will currently ALWAYS remove the oldest active key completely since IAM AccessKeys only allow 2 total and cannot be modified.
+<br>
+In the rare event the user has 2 'ACTIVE' keys, this function will currently ALWAYS remove the oldest active key completely since IAM AccessKeys only allow 2 total and cannot be modified.<br>
 
 # How it Works
-this deployment uses a Lambda function that rotates EVERY IAM user that you define every 90 days (default). 
-Lambda function is triggered daily from an EventBridge timed event (previously CloudwatchEvents)
+this deployment uses a Lambda function that rotates EVERY IAM user that you define every 90 days (default). <br>
+Lambda function is triggered daily from an EventBridge timed event (previously CloudwatchEvents)<br>
 
-#This solution is pre-compiled and ready to deploy, the lambda is already packaged here in the repo (.zip)
-# no dependencies and no S3 bucket needed (just your state bucket for reference in backend.config). Only need Terraform version 1.0.5 or higher, change vars to your liking and 'terraform apply'
+#This solution is pre-compiled and ready to deploy, the lambda is already packaged here in the repo (.zip)<br>
+#### no dependencies. Only need Terraform version 1.0.5 or higher, change vars to your liking and 'terraform apply'<br>
 
 - Variables for 'days till rotation', 'region', and 'days till inactive' are found in terraform.tfvars and can be changed.
 - First Lambda function checks for keys that are 'inactive' for 15 days or more from the 'active' key creation date. 
