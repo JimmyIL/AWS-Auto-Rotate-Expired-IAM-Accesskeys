@@ -33,8 +33,8 @@ this deployment uses a total of 2 Lambda functions that rotates IAM user accessk
 - If inactive key is >= 15 days old it is removed/deleted<br>
 - First lambda Invokes Second lambda once completed for all usernames<br>
 - Lambda checks every user with at least 1 'active' key status all others are skipped and untouched.<br>
-- Selects only if an accesskey is 'active' and creation date is less than or equal to -90 days from today's date (90 days ago)<br>
-- deactivates previous existing key that >= 90 days<br>
+- Selects only if an accesskey is 'active' and creation date is less than or equal to -30 days from today's date (30 days ago)<br>
+- deactivates previous existing key that >= 30 days<br>
 - creates a new IAM user accesskey<br>
 - checks if secret name in SecretsManager already exists that matches '$user_credentials'<br>
 - if exists already;  updates secret with new keys created into secrets manager<br>
