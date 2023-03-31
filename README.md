@@ -1,28 +1,34 @@
 
 # Auto Rotate AWS IAM User active accesskeys <br>
-Please understand THIS WILL ROTATE ALL IAM USERs for an account and create secrets in SecretsManager FOR EVERY USER that is NOT defined in the 'username_exception' variable.  If you don't wish to rotate certain users define them in 'username_exception' (see below)
+This will rotate all IAM user's in an account and create secrets in SecretsManager. If you don't wish to rotate certain users define them in the 'username_exception' variable (see below)<br>
 <br>
-default rotates AccessKeys/secretkeys if created on or older than 90 days.
+-this rotates AccessKeys/secretkeys if created on or after <x> days (defaults to 30 days unless specified).
 <br>
-note:depending on the amount of users, it could be costly for customers with a large amount of users since it is storing the keys in AWS SecretsManager)
+-note:depending on the amount of users, it could be costly for customers with a large amount of users since this is storing the keys in AWS SecretsManager.<br>
+(after the user grabs the secretkey, you can also delete the secret, but it will be re-created upon the next rotation.<br>
+-IF there are automated service accounts as IAM user's you don't want to rotate, you can add them as a list to tfvars 'username_exceptions' and it will skip these users.
 <br>
-IF there are automated service accounts in IAMusers you don't want to rotate, you can add them as a list to tfvars 'username_exceptions' and it will skip these users.
+-In the event a user only has 'INACTIVE' keys, no rotation or modification takes place.  Essentially that user is just skipped.
 <br>
-In the event a user only has 'INACTIVE' keys, no rotation or modification takes place.  Essentially that user is skipped.
+-In the event a user has NO keys, they will continue to have no keys and skipped.
 <br>
-In the event a user has NO keys, they will continue to have no keys.
-<br>
-In the rare event the user has 2 'ACTIVE' keys, this function will currently ALWAYS remove the oldest active key completely since IAM AccessKeys only allow 2 total and cannot be modified.<br>
+-In the rare event the user has 2 'ACTIVE' acesskeys, this function will currently ALWAYS rotate the oldest active key with a new accesskey completely (IAM AccessKeys only allow 2 total, this is the way..)<br>
 
 # How it Works
-this deployment uses a Lambda function that rotates EVERY IAM user that you define every 90 days (90 day default or you can change this var.). <br>
-Lambda function is triggered daily from an EventBridge timed event (previously CloudwatchEvents)<br>
+this deployment uses a total of 2 Lambda functions that rotates IAM user accesskeys for every x days (30 day default or you can change in .tfvars file 'days_to_rotate'.). <br>
 
-#This solution is pre-compiled and ready to deploy, the lambda is already packaged here in the repo (.zip)<br>
-#### no dependencies. Only need Terraform version 1.0.5 or higher, change vars to your liking and 'terraform apply'<br>
+-A scheduled daily EventBridge Event triggers the 'remove_inactive_accesskeys' lambda function.  This lambda then checks the IAM accesskeys for inactive keys and removes them if according to the variable 'days_to_remove_inactive' (default is 15 days of being inactive). The user MUST also have an ACTIVE accesskey for this to work, otherwise it doesn't remove inactive keys for that user.<br>
+-From the 'remove_inactive_acceskeys' lambda function the 'iam_user_rotate_accesskeys' lambda function is triggered.  This function sets the current expired accesskey to 'inactive', creates the new user accesskey and writes the new accesskey and secretkey into AWS Secrets Manager.  If the Secret name already exists, it is updated.  If the secret doesn't exist it's created.<br>
 
+-Secrets Manager for that specific users secret has a policy attached that only allows Admin and that specific user to view the secret.<br>
+<br>
+<br>
+#This solution is already compiled and ready to deploy, (those are the .zip files, those need to stay)<br>
+#### no dependencies. Only need Terraform version 1.0.5 or higher, change variables that suits your rotation schedule needs and init + apply<br>
+<br>
+## TLDR? This is the Summary:
 - Variables for 'days till rotation', 'region', and 'days till inactive' are found in terraform.tfvars and can be changed.
-- First Lambda function checks for keys that are 'inactive' for 15 days or more from the 'active' key creation date. 
+- First Lambda function checks for keys that are 'inactive' for x days (default 15 days). 
 - If inactive key is >= 15 days old it is removed/deleted
 - First lambda Invokes Second lambda once completed for all usernames
 - Lambda checks every user with at least 1 'active' key status all others are skipped and untouched.
