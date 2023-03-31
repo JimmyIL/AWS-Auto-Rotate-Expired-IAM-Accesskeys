@@ -26,19 +26,19 @@ this deployment uses a total of 2 Lambda functions that rotates IAM user accessk
 ## This solution is already compiled and ready to deploy, (those are the .zip files, those need to stay)<br>
 #### no dependencies. Only need Terraform version 1.0.5 or higher, change variables that suits your rotation schedule needs and init + apply<br>
 <br>
-## TLDR? This is the Summary:
-- Variables for 'days till rotation', 'region', and 'days till inactive' are found in terraform.tfvars and can be changed.
-- First Lambda function checks for keys that are 'inactive' for x days (default 15 days). 
-- If inactive key is >= 15 days old it is removed/deleted
-- First lambda Invokes Second lambda once completed for all usernames
-- Lambda checks every user with at least 1 'active' key status all others are skipped and untouched.
-- Selects only if an accesskey is 'active' and creation date is less than or equal to -90 days from today's date (90 days ago)
-- deactivates previous existing key that >= 90 days  
-- creates a new IAM user accesskey
-- checks if secret name in SecretsManager already exists that matches '$user_credentials'
-- if exists already;  updates secret with new keys created into secrets manager 
-- this writes a secrets permissions policy to the secret so that only the username that secret is for can access his/her own new secret (only can retrieve own secret string)
-
+## TLDR? This is the Summary:<br>
+- Variables for 'days till rotation', 'region', and 'days till inactive' are found in terraform.tfvars and can be changed.<br>
+- First Lambda function checks for keys that are 'inactive' for x days (default 15 days).<br>
+- If inactive key is >= 15 days old it is removed/deleted<br>
+- First lambda Invokes Second lambda once completed for all usernames<br>
+- Lambda checks every user with at least 1 'active' key status all others are skipped and untouched.<br>
+- Selects only if an accesskey is 'active' and creation date is less than or equal to -90 days from today's date (90 days ago)<br>
+- deactivates previous existing key that >= 90 days<br>
+- creates a new IAM user accesskey<br>
+- checks if secret name in SecretsManager already exists that matches '$user_credentials'<br>
+- if exists already;  updates secret with new keys created into secrets manager<br>
+- this writes a secrets permissions policy to the secret so that only the username that secret is for can access his/her own new secret (only can retrieve own secret string)<br>
+<br>
 
 IN Progress Lambda function for sns topic checking secrets update dates and sending an email with users that the rotation rotated keys for
 (currently working on this...)
