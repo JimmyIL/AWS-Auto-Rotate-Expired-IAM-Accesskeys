@@ -26,7 +26,8 @@ this deployment uses a total of 2 Lambda functions that rotates IAM user accessk
 ## This solution is already compiled and ready to deploy, (those are the .zip files, those need to stay)<br>
 #### no dependencies. Only need Terraform version 1.0.5 or higher, change variables that suits your rotation schedule needs and init + apply<br>
 <br>
-## TLDR? This is the Summary:<br>
+  ## TLDR? This is the Summary:
+  <br>
 - Variables for 'days till rotation', 'region', and 'days till inactive' are found in terraform.tfvars and can be changed.<br>
 - First Lambda function checks for keys that are 'inactive' for x days (default 15 days).<br>
 - If inactive key is >= 15 days old it is removed/deleted<br>
