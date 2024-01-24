@@ -14,4 +14,4 @@ event_frequency = "rate(1 day)"
 #username_exceptions = ["scotty", "blueshirt.guy"]
 
 #email you want alerts sent to, comment out if N/A
-sns_alert_emails = ["someemail1@rackspace.com", "someemail2@rackspace.com"]
+sns_alert_emails = ["someemail1@myemail.com", "someemail2@myemail.com"]
